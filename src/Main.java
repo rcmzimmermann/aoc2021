@@ -12,15 +12,17 @@ public class Main {
         try {
 //            resultPartOne = main.resultDayOnePartOne(main.getIntegerInputFromList("day-one.txt"));
 //            resultPartTwo = main.resultDayOnePartTwo(main.getIntegerInputFromList("day-one.txt"));
-            resultPartOne = main.resultDayTwoPartOne(main.getStringInputFromList("day-two.txt"));
-            resultPartTwo = main.resultDayTwoPartTwo(main.getStringInputFromList("day-two.txt"));
+//            resultPartOne = main.resultDayTwoPartOne(main.getStringInputFromList("day-two.txt"));
+//            resultPartTwo = main.resultDayTwoPartTwo(main.getStringInputFromList("day-two.txt"));
+            resultPartOne = main.resultDayThreePartOne(main.getStringInputFromList("day-three.txt"));
+            resultPartTwo = main.resultDayThreePartTwo(main.getStringInputFromList("day-three.txt"));
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
             e.printStackTrace();
         }
 
-        System.out.println(resultPartOne);
-        System.out.println(resultPartTwo);
+        System.out.println("Result 1: " + resultPartOne);
+        System.out.println("Result 2: " + resultPartTwo);
     }
 
     public ArrayList<Integer> getIntegerInputFromList(String fileName) throws FileNotFoundException {
@@ -120,4 +122,106 @@ public class Main {
         }
         return horizontal * depth;
     }
+
+    public int resultDayThreePartOne(ArrayList<String> inputList) {
+        int numInputs = inputList.size();
+        int[] mostCommon = new int[inputList.get(0).length()];
+        for (String string : inputList) {
+            for (int j = 0; j < string.length(); j++) {
+                if (string.charAt(j) == '1') {
+                    mostCommon[j]++;
+                }
+            }
+        }
+
+        String gammaStr = "";
+        String epsilonStr = "";
+        for (int i : mostCommon) {
+
+            if (i > numInputs / 2) {
+                gammaStr += 1;
+                epsilonStr += 0;
+            } else {
+                gammaStr += 0;
+                epsilonStr += 1;
+            }
+        }
+
+        int gammaRate = Integer.parseInt(gammaStr, 2);
+        int epsilonRate = Integer.parseInt(epsilonStr, 2);
+
+        return gammaRate * epsilonRate;
+    }
+
+    public int resultDayThreePartTwo(ArrayList<String> inputList) {
+        ArrayList<String> o2List = new ArrayList<>();
+        ArrayList<String> co2List = new ArrayList<>();
+
+        for (String string : inputList) {
+            o2List.add(string);
+            co2List.add(string);
+        }
+
+        int o2 = 0;
+        int co2 = 0;
+
+        for (int i = 0; i < inputList.get(0).length(); i++) {
+            if (o2List.size() > 1) {
+                o2List = getNewO2InputList(o2List, i);
+            }
+        }
+
+        for (int i = 0; i < inputList.get(0).length(); i++) {
+            if (co2List.size() > 1) {
+                co2List = getNewCO2InputList(co2List, i);
+            }
+        }
+
+        if (!o2List.isEmpty() && !co2List.isEmpty()) {
+            o2 = Integer.parseInt(o2List.get(0), 2);
+            co2 = Integer.parseInt(co2List.get(0), 2);
+        }
+
+        return o2 * co2;
+
+    }
+
+    public ArrayList<String> getNewO2InputList(ArrayList<String> inputList, int stringIndex) {
+        int numOne = 0;
+
+        for (String string : inputList) {
+            if (string.charAt(stringIndex) == '1') {
+                numOne++;
+            }
+        }
+
+        char mostCommon;
+        mostCommon = numOne >= (inputList.size() / 2 + inputList.size() % 2) ? '1' : '0';
+
+        for (int i = 0; i < inputList.size(); i++) {
+            inputList.removeIf(string -> string.charAt(stringIndex) != mostCommon);
+        }
+
+        return inputList;
+    }
+
+    public ArrayList<String> getNewCO2InputList(ArrayList<String> inputList, int stringIndex) {
+        int numOne = 0;
+
+        for (String string : inputList) {
+            if (string.charAt(stringIndex) == '1') {
+                numOne++;
+            }
+        }
+
+        char lessCommon;
+        lessCommon = numOne >= (inputList.size() / 2 + inputList.size() % 2) ? '0' : '1';
+
+        for (int i = 0; i < inputList.size(); i++) {
+            inputList.removeIf(string -> string.charAt(stringIndex) != lessCommon);
+        }
+
+        return inputList;
+    }
+
 }
