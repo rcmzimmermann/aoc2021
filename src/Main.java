@@ -14,14 +14,24 @@ public class Main {
 //            resultPartTwo = main.resultDayOnePartTwo(main.getIntegerInputFromList("day-one.txt"));
 //            resultPartOne = main.resultDayTwoPartOne(main.getStringInputFromList("day-two.txt"));
 //            resultPartTwo = main.resultDayTwoPartTwo(main.getStringInputFromList("day-two.txt"));
-            resultPartOne = main.resultDayThreePartOne(main.getStringInputFromList("day-three.txt"));
-            resultPartTwo = main.resultDayThreePartTwo(main.getStringInputFromList("day-three.txt"));
+//            resultPartOne = main.resultDayThreePartOne(main.getStringInputFromList("day-three.txt"));
+//            resultPartTwo = main.resultDayThreePartTwo(main.getStringInputFromList("day-three.txt"));
+
+            ArrayList<Integer> calledNumbers = main.getCalledNumbers(main.getStringInputFromList("day-four.txt"));
+            ArrayList<BingoCard> cards = main.makeBingoCards(main.getStringInputFromList("day-four.txt"));
+//            BingoCard winningCard = main.callNumber(cards, calledNumbers, "win");
+//            System.out.println(winningCard);
+//            resultPartOne = main.calculateScore(winningCard);
+            BingoCard losingCard = main.callNumber(cards, calledNumbers, "lose");
+            System.out.println(losingCard);
+            resultPartTwo = main.calculateScore(losingCard);
+
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
             e.printStackTrace();
         }
 
-        System.out.println("Result 1: " + resultPartOne);
+//        System.out.println("Result 1: " + resultPartOne);
         System.out.println("Result 2: " + resultPartTwo);
     }
 
@@ -198,9 +208,7 @@ public class Main {
         char mostCommon;
         mostCommon = numOne >= (inputList.size() / 2 + inputList.size() % 2) ? '1' : '0';
 
-        for (int i = 0; i < inputList.size(); i++) {
-            inputList.removeIf(string -> string.charAt(stringIndex) != mostCommon);
-        }
+        inputList.removeIf(string -> string.charAt(stringIndex) != mostCommon);
 
         return inputList;
     }
@@ -217,11 +225,137 @@ public class Main {
         char lessCommon;
         lessCommon = numOne >= (inputList.size() / 2 + inputList.size() % 2) ? '0' : '1';
 
-        for (int i = 0; i < inputList.size(); i++) {
-            inputList.removeIf(string -> string.charAt(stringIndex) != lessCommon);
-        }
+        inputList.removeIf(string -> string.charAt(stringIndex) != lessCommon);
 
         return inputList;
+    }
+
+    public ArrayList<Integer> getCalledNumbers(ArrayList<String> input) {
+        ArrayList<Integer> calledNumbers = new ArrayList<>();
+        String[] numbers = input.get(0).split(",");
+        for (String number : numbers) {
+            calledNumbers.add(Integer.parseInt(number));
+//            System.out.println(Integer.parseInt(number));
+        }
+        return calledNumbers;
+    }
+
+    public ArrayList<BingoCard> makeBingoCards(ArrayList<String> input) {
+        input.removeIf(string -> string.contains(",") || string.equals(""));
+        ArrayList<BingoCard> cards = new ArrayList<>();
+
+        for (int i = 0; i < input.size(); i = i + 5) {
+            ArrayList<Integer> row1 = getRow(input.get(i));
+            ArrayList<Integer> row2 = getRow(input.get(i + 1));
+            ArrayList<Integer> row3 = getRow(input.get(i + 2));
+            ArrayList<Integer> row4 = getRow(input.get(i + 3));
+            ArrayList<Integer> row5 = getRow(input.get(i + 4));
+
+            BingoCard bingoCard = new BingoCard(row1, row2, row3, row4, row5);
+            cards.add(bingoCard);
+
+        }
+
+        return cards;
+    }
+
+    public ArrayList<Integer> getRow(String string) {
+        ArrayList<Integer> row = new ArrayList<>();
+        String[] rowArr = string.split(" ");
+
+        for (String str : rowArr) {
+            if (!str.equals("")) {
+                row.add(Integer.parseInt(str));
+            }
+        }
+
+        return row;
+    }
+
+    public BingoCard callNumber(ArrayList<BingoCard> cards, ArrayList<Integer> calledNumbers, String winOrLose) {
+
+        switch (winOrLose) {
+            case "win":
+                for (int i = 0; i < calledNumbers.size(); i++) {
+                    System.out.println("Calling number: " + calledNumbers.get(i));
+                    for (BingoCard card : cards) {
+                        card.setLastNumCalled(calledNumbers.get(i));
+                        card.callNumber(calledNumbers.get(i));
+                        boolean bingo = card.checkBingo();
+                        if (bingo) {
+                            return card;
+                        }
+                    }
+                }
+            case "lose":
+                int numCardsBingo = 0;
+                int lastCardBingoIndex = 0;
+                ArrayList<Integer> indexToSkip = new ArrayList<>();
+                for (int i = 0; i < calledNumbers.size(); i++) {
+                    System.out.println("Calling number: " + calledNumbers.get(i));
+
+                    for (int j = 0; j < cards.size() - 1; j++) {
+                        if (indexToSkip.contains(j)) {
+                            continue;
+                        } else {
+                            BingoCard card = cards.get(j);
+                            card.setLastNumCalled(calledNumbers.get(i));
+                            card.callNumber(calledNumbers.get(i));
+                            boolean bingo = card.checkBingo();
+                            if (bingo) {
+                                System.out.println("Bingo on card: " + cards.indexOf(cards.get(j)));
+                                lastCardBingoIndex = j;
+                                indexToSkip.add(lastCardBingoIndex);
+                                numCardsBingo++;
+                                System.out.println("Num cards won: " + numCardsBingo);
+                            }
+                        }
+                    }
+
+                }
+                return cards.get(lastCardBingoIndex);
+        }
+
+        return null;
+    }
+
+
+    public int calculateScore(BingoCard card) {
+        int total = 0;
+        for (int i = 0; i < card.getRow1Boolean().size(); i++) {
+            if (!card.getRow1Boolean().get(i)) {
+                total += card.getRow1().get(i);
+            }
+        }
+
+        for (int i = 0; i < card.getRow2Boolean().size(); i++) {
+            if (!card.getRow2Boolean().get(i)) {
+                total += card.getRow2().get(i);
+            }
+        }
+
+        for (int i = 0; i < card.getRow3Boolean().size(); i++) {
+            if (!card.getRow3Boolean().get(i)) {
+                total += card.getRow3().get(i);
+            }
+        }
+
+        for (int i = 0; i < card.getRow4Boolean().size(); i++) {
+            if (!card.getRow4Boolean().get(i)) {
+                total += card.getRow4().get(i);
+            }
+        }
+
+        for (int i = 0; i < card.getRow5Boolean().size(); i++) {
+            if (!card.getRow5Boolean().get(i)) {
+                total += card.getRow5().get(i);
+            }
+        }
+
+        System.out.println("Nums added up: " + total);
+        System.out.println("Last number called: " + card.getLastNumCalled());
+
+        return total * card.getLastNumCalled();
     }
 
 }
