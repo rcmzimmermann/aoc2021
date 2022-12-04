@@ -13,13 +13,9 @@ public class Main {
 
     public static void main(String[] args) {
         Main main = new Main();
-
-
-
         int resultPartOne = 0;
-        int resultPartTwo = 0;
         try {
-            resultPartOne = main.resultDayThreePartTwo(main.getStringInputFromList("C:\\Users\\Robii\\Documents\\Programming\\aoc2021\\day-three.txt"));
+            resultPartOne = main.resultDayFourPartOne(main.getStringInputFromList("C:\\Users\\Robii\\Documents\\Programming\\aoc2021\\day-four.txt"));
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
@@ -234,6 +230,52 @@ public class Main {
         Collections.sort(list, c);
 
         return list.get(0) + ";" + list.get(1) + ";" + list.get(2);
+    }
+
+    public int resultDayFourPartOne(ArrayList<String> inputList) {
+
+        int totalOverlaps = 0;
+        for (String input : inputList) {
+            List<Integer> list1 = new ArrayList<>();
+            List<Integer> list2 = new ArrayList<>();
+            String[] array = input.split(",");
+            String one = array[0];
+            String two = array[1];
+
+            String[] arrayOne = one.split("-");
+            String[] arrayTwo = two.split("-");
+
+            int oneOne = Integer.parseInt(arrayOne[0]);
+            int oneTwo = Integer.parseInt(arrayOne[1]);
+            int twoOne = Integer.parseInt(arrayTwo[0]);
+            int twoTwo = Integer.parseInt(arrayTwo[1]);
+
+            for (int i = oneOne; i < oneTwo + 1; i++) {
+                list1.add(i);
+            }
+            for (int i = twoOne; i < twoTwo + 1; i++) {
+                list2.add(i);
+            }
+
+            if (list1.size() > list2.size()) {
+                for (int i = 0; i < list1.size(); i++) {
+                    if (list2.contains(list1.get(i))) {
+                        totalOverlaps++;
+                        break;
+                    }
+                }
+            } else {
+                for (int i = 0; i < list2.size(); i++) {
+                    if (list1.contains(list2.get(i))) {
+                        totalOverlaps++;
+                        break;
+                    }
+                }
+            }
+
+        }
+
+        return totalOverlaps;
     }
 
 }
