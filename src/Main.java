@@ -11,18 +11,22 @@ public class Main {
     final String DRAW = "Draw";
     final String WIN = "WIN";
 
+    Map<Integer, Stack> stacks = new HashMap<>();
+
     public static void main(String[] args) {
         Main main = new Main();
-        int resultPartOne = 0;
+        main.fillStacks();
+        String stringResult = "";
+        int intResult = 0;
         try {
-            resultPartOne = main.resultDayFourPartOne(main.getStringInputFromList("C:\\Users\\Robii\\Documents\\Programming\\aoc2021\\day-four.txt"));
+            intResult = main.resultDaySix(main.getStringInputFromList("C:\\Users\\Robii\\Documents\\Programming\\aoc2021\\day-six.txt"));
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
             e.printStackTrace();
         }
 
-        System.out.println("Result 1: " + resultPartOne);
+        System.out.println("Result 1: " + intResult);
     }
 
     public ArrayList<Integer> getIntegerInputFromList(String fileName) throws FileNotFoundException {
@@ -278,4 +282,141 @@ public class Main {
         return totalOverlaps;
     }
 
+    public void fillStacks() {
+        Stack<String> stack1 = new Stack<>();
+        stack1.push("B");
+        stack1.push("Q");
+        stack1.push("C");
+        stacks.put(1, stack1);
+
+        Stack<String> stack2 = new Stack<>();
+        stack2.push("R");
+        stack2.push("Q");
+        stack2.push("W");
+        stack2.push("Z");
+        stacks.put(2, stack2);
+
+        Stack<String> stack3 = new Stack<>();
+        stack3.push("B");
+        stack3.push("M");
+        stack3.push("R");
+        stack3.push("L");
+        stack3.push("V");
+        stacks.put(3, stack3);
+
+        Stack<String> stack4 = new Stack<>();
+        stack4.push("C");
+        stack4.push("Z");
+        stack4.push("H");
+        stack4.push("V");
+        stack4.push("T");
+        stack4.push("W");
+        stacks.put(4, stack4);
+
+        Stack<String> stack5 = new Stack<>();
+        stack5.push("D");
+        stack5.push("Z");
+        stack5.push("H");
+        stack5.push("B");
+        stack5.push("N");
+        stack5.push("V");
+        stack5.push("G");
+        stacks.put(5, stack5);
+
+        Stack<String> stack6 = new Stack<>();
+        stack6.push("H");
+        stack6.push("N");
+        stack6.push("P");
+        stack6.push("C");
+        stack6.push("J");
+        stack6.push("F");
+        stack6.push("V");
+        stack6.push("Q");
+        stacks.put(6, stack6);
+
+        Stack<String> stack7 = new Stack<>();
+        stack7.push("D");
+        stack7.push("G");
+        stack7.push("T");
+        stack7.push("R");
+        stack7.push("W");
+        stack7.push("Z");
+        stack7.push("S");
+        stacks.put(7, stack7);
+
+        Stack<String> stack8 = new Stack<>();
+        stack8.push("C");
+        stack8.push("G");
+        stack8.push("M");
+        stack8.push("N");
+        stack8.push("B");
+        stack8.push("W");
+        stack8.push("Z");
+        stack8.push("P");
+        stacks.put(8, stack8);
+
+        Stack<String> stack9 = new Stack<>();
+        stack9.push("N");
+        stack9.push("J");
+        stack9.push("B");
+        stack9.push("M");
+        stack9.push("W");
+        stack9.push("Q");
+        stack9.push("F");
+        stack9.push("P");
+        stacks.put(9, stack9);
+    }
+
+    public void resultDayFivePartOne(List<String> inputList) {
+
+        inputList.forEach(i -> {
+            i = i.replace("move ", "");
+            i = i.replace(" from ", ":");
+            i = i.replace(" to ", ":");
+            String[] array = i.split(":");
+            Step step = new Step(Integer.parseInt(array[0]), Integer.parseInt(array[1]), Integer.parseInt(array[2]));
+            moveItemsOnStack(step);
+        });
+    }
+
+    public void moveItemsOnStack(Step step) {
+        int amount = step.getAmount();
+        int fromStack = step.getFromStack();
+        int toStack = step.getToStack();
+
+        List<String> moves = new ArrayList<>();
+        for (int i = 0; i < amount; i++) {
+
+            moves.add((String) stacks.get(fromStack).pop());
+        }
+
+        Collections.reverse(moves);
+        moves.forEach(m -> stacks.get(toStack).push(m));
+    }
+
+    public int resultDaySix(List<String> inputList) {
+        String input = inputList.get(0);
+        for (int i = 0; i < input.length(); i++) {
+            if (i+14 > input.length()) {
+                break;
+            }
+
+            String substring = input.substring(i, i+14);
+            if (isUniqueSequence(substring))
+                return input.indexOf(substring)+14;
+        }
+        return 0;
+    }
+
+    public boolean isUniqueSequence(String substring) {
+        char[] sequence = substring.toCharArray();
+        for (int i = 0; i < sequence.length-1; i++) {
+            for (int j = i+1; j < sequence.length; j++) {
+                if (sequence[i] == sequence[j]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }
