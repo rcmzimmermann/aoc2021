@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
 
@@ -19,7 +21,7 @@ public class Main {
         String stringResult = "";
         int intResult = 0;
         try {
-            intResult = main.resultDaySix(main.getStringInputFromList("C:\\Users\\Robii\\Documents\\Programming\\aoc2021\\day-six.txt"));
+            main.resultDaySeven(main.getStringInputFromList("C:\\Users\\Robii\\Documents\\Programming\\aoc2021\\day-seven.txt"));
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
@@ -56,6 +58,18 @@ public class Main {
         scanner.close();
         return inputList;
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
     public int resultDayOne(ArrayList<Integer> inputList) {
         List<Integer> list = new ArrayList<>();
@@ -418,5 +432,183 @@ public class Main {
             }
         }
         return true;
+    }
+
+    public void resultDaySeven(List<String> inputList) {
+        Node root = new Node(Type.DIR, "Root");
+        Node currentNode = root;
+        for (String i : inputList) {
+            String[] array = i.split(" ");
+            if (i.startsWith("$ cd")) {
+                if (i.contains("..")) {
+                    currentNode.updateSize();
+                    currentNode = currentNode.moveToParent();
+                } else {
+                    currentNode = currentNode.moveToChild(array[2]);
+                }
+            } else if (i.startsWith("$ ls")) {
+                System.out.println("list contents");
+
+            } else if (i.startsWith("dir")) {
+                currentNode.addChild(new Node(Type.DIR, array[1], currentNode));
+
+            } else if (Pattern.matches("^[0-9]+ [a-z]*.*[a-z]*", i)) {
+                currentNode.addChild(new Node(Type.FILE, Long.valueOf(array[0]), array[1], currentNode));
+
+            } else {
+                System.out.println("something wrong");
+            }
+        }
+
+        root.updateSize();
+
+        long totalFileSystemSize = 70000000;
+        long requiredUnusedSpace = 30000000;
+        long rootSize = root.getSize();
+        long difference = totalFileSystemSize - rootSize;
+        long extraSpaceNeeded = requiredUnusedSpace - difference;
+
+        long total = 0L;
+
+        List<Node> bigEnough = new ArrayList<>();
+
+        for (Map.Entry<String, Node> entry : root.getChildren().entrySet()) {
+            Node b = entry.getValue();
+            if (b.getType().equals(Type.DIR)) {
+                System.out.println("1. |__ " + b.getName() + ": " + b.getSize());
+                if (b.getSize() < 100000) {
+                    total += b.getSize();
+                }
+                if (b.getSize() > extraSpaceNeeded) {
+                    bigEnough.add(b);
+                }
+            } else {
+                System.out.println("1. ___ " + b.getName() + ": " + b.getSize());
+            }
+            for (Map.Entry<String, Node> mapEntry : b.getChildren().entrySet()) {
+                Node d = mapEntry.getValue();
+                if (d.getType().equals(Type.DIR)) {
+                    System.out.println("\t2. |__ " + d.getName() + ": " + d.getSize());
+                    if (d.getSize() < 100000) {
+                        total += d.getSize();
+                    }
+                    if (d.getSize() > extraSpaceNeeded) {
+                        bigEnough.add(d);
+                    }
+                } else {
+                    System.out.println("\t2. ___ " + d.getName() + ": " + d.getSize());
+                }
+                for (Map.Entry<String, Node> e : d.getChildren().entrySet()) {
+                    Node f = e.getValue();
+                    if (f.getType().equals(Type.DIR)) {
+                        System.out.println("\t\t3. |__ " + f.getName() + ": " + f.getSize());
+                        if (f.getSize() < 100000) {
+                            total += f.getSize();
+                        }
+                        if (f.getSize() > extraSpaceNeeded) {
+                            bigEnough.add(f);
+                        }
+                    } else {
+                        System.out.println("\t\t3. ___ " + f.getName() + ": " + f.getSize());
+                    }
+                    for (Map.Entry<String, Node> stringNodeEntry : f.getChildren().entrySet()) {
+                        Node h = stringNodeEntry.getValue();
+                        if (h.getType().equals(Type.DIR)) {
+                            System.out.println("\t\t\t4. |__ " + h.getName() + ": " + h.getSize());
+                            if (h.getSize() < 100000) {
+                                total += h.getSize();
+                            }
+                            if (h.getSize() > extraSpaceNeeded) {
+                                bigEnough.add(h);
+                            }
+                        } else {
+                            System.out.println("\t\t\t4. ___ " + h.getName() + ": " + h.getSize());
+                        }
+                        for (Map.Entry<String, Node> nodeEntry : h.getChildren().entrySet()) {
+                            Node j = nodeEntry.getValue();
+                            if (j.getType().equals(Type.DIR)) {
+                                System.out.println("\t\t\t\t5. |__ " + j.getName() + ": " + j.getSize());
+                                if (j.getSize() < 100000) {
+                                    total += j.getSize();
+                                }
+                                if (j.getSize() > extraSpaceNeeded) {
+                                    bigEnough.add(j);
+                                }
+                            } else {
+                                System.out.println("\t\t\t\t5. ___ " + j.getName() + ": " + j.getSize());
+                            }
+                            for (Map.Entry<String, Node> entry1 : j.getChildren().entrySet()) {
+                                Node l = entry1.getValue();
+                                if (l.getType().equals(Type.DIR)) {
+                                    System.out.println("\t\t\t\t\t6. |__ " + l.getName() + ": " + l.getSize());
+                                    if (l.getSize() < 100000) {
+                                        total += l.getSize();
+                                    }
+                                    if (l.getSize() > extraSpaceNeeded) {
+                                        bigEnough.add(l);
+                                    }
+                                } else {
+                                    System.out.println("\t\t\t\t\t6. ___ " + l.getName() + ": " + l.getSize());
+                                }
+                                for (Map.Entry<String, Node> e1 : l.getChildren().entrySet()) {
+                                    Node n = e1.getValue();
+                                    if (n.getType().equals(Type.DIR)) {
+                                        System.out.println("\t\t\t\t\t\t7. |__ " + n.getName() + ": " + n.getSize());
+                                        if (n.getSize() < 100000) {
+                                            total += n.getSize();
+                                        }
+                                        if (n.getSize() > extraSpaceNeeded) {
+                                            bigEnough.add(n);
+                                        }
+                                    } else {
+                                        System.out.println("\t\t\t\t\t\t7. ___ " + n.getName() + ": " + n.getSize());
+                                    }
+                                    for (Map.Entry<String, Node> mapEntry1 : n.getChildren().entrySet()) {
+                                        Node p = mapEntry1.getValue();
+                                        if (p.getType().equals(Type.DIR)) {
+                                            System.out.println("\t\t\t\t\t\t\t8. |__ " + p.getName() + ": " + p.getSize());
+                                            if (p.getSize() < 100000) {
+                                                total += p.getSize();
+                                            }
+                                            if (p.getSize() > extraSpaceNeeded) {
+                                                bigEnough.add(p);
+                                            }
+                                        } else {
+                                            System.out.println("\t\t\t\t\t\t\t8. ___ " + p.getName() + ": " + p.getSize());
+                                        }
+                                        for (Map.Entry<String, Node> stringNodeEntry1 : p.getChildren().entrySet()) {
+                                            Node r = stringNodeEntry1.getValue();
+                                            if (r.getType().equals(Type.DIR)) {
+                                                System.out.println("\t\t\t\t\t\t\t\t9. |__ " + r.getName() + ": " + r.getSize());
+                                                if (r.getSize() < 100000) {
+                                                    total += r.getSize();
+                                                }
+                                                if (r.getSize() > extraSpaceNeeded) {
+                                                    bigEnough.add(r);
+                                                }
+                                            } else {
+                                                System.out.println("\t\t\t\t\t\t\t\t9. ___ " + r.getName() + ": " + r.getSize());
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        System.out.println("\n\nTotal: " + total);
+
+
+        System.out.println("\nRoot size: " + rootSize);
+        System.out.println("Total filesystem size: " + totalFileSystemSize);
+        System.out.println("Difference: " + difference);
+        System.out.println("Extra space required: " + extraSpaceNeeded + "\n\n");
+
+        bigEnough.sort(Comparator.comparing(Node::getSize));
+        bigEnough.forEach(n -> System.out.println(n));
+
     }
 }
