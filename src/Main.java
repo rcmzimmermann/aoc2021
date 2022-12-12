@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.sql.Struct;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,14 +22,14 @@ public class Main {
         String stringResult = "";
         int intResult = 0;
         try {
-            main.resultDaySeven(main.getStringInputFromList("C:\\Users\\Robii\\Documents\\Programming\\aoc2021\\day-seven.txt"));
+            main.resultDayEight(main.getStringInputFromList("C:\\Users\\Robii\\Documents\\Programming\\aoc2021\\day-eight.txt"));
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
             e.printStackTrace();
         }
 
-        System.out.println("Result 1: " + intResult);
+//        System.out.println("Result 1: " + intResult);
     }
 
     public ArrayList<Integer> getIntegerInputFromList(String fileName) throws FileNotFoundException {
@@ -57,6 +58,112 @@ public class Main {
         }
         scanner.close();
         return inputList;
+    }
+
+
+    public void resultDayEight(List<String> inputList) {
+        Map<Integer, List<Tree>> treeGrid = new HashMap<>();
+        for (int i = 0; i < inputList.size(); i++) {
+            List<String> row = List.of(inputList.get(i).split(""));
+            List<Tree> treeRow = new ArrayList<>();
+            row.forEach(t -> treeRow.add(new Tree(Integer.parseInt(t))));
+            treeGrid.put(i, treeRow);
+        }
+
+        int highestFromLeftIndex = getVisibleFromLeft(treeGrid);
+        int highestFromRightIndex = getVisibleFromRight(treeGrid);
+        int highestFromTopIndex = getVisibleFromTop(treeGrid);
+
+        treeGrid.forEach((k, row) -> {
+            System.out.println("\nRow: " + (k + 1) + "\n" + row);
+            row.forEach(r -> System.out.print(r.isVisibleFromLeft() + " "));
+            System.out.println("");
+            row.forEach(r -> System.out.print(r.isVisibleFromRight() + " "));
+            System.out.println("\n");
+            row.forEach(r -> System.out.print(r.isVisibleFromTop() + " "));
+            System.out.println("\n");
+//            row.forEach(r -> System.out.print(r.isVisibleFromBottom() + " "));
+//            System.out.println("\n");
+        });
+
+    }
+
+    public int getVisibleFromLeft(Map<Integer, List<Tree>> treeGrid) {
+        for (Map.Entry<Integer, List<Tree>> entry : treeGrid.entrySet()) {
+            Integer k = entry.getKey();
+            List<Tree> row = entry.getValue();
+//            System.out.println("\nRow: " + (k + 1) + "\n" + row);
+            if (k == 0) {
+                row.forEach(t -> t.setVisibleFromTop(true));
+            } else if (k == row.size() - 1) {
+                row.forEach(t -> t.setVisibleFromBottom(true));
+            } else {
+                // Visible from left
+                row.get(0).setVisibleFromLeft(true);
+                int highestFromLeftIndex = 0;
+                for (int i = 1; i < row.size() - 1; i++) {
+                    if (row.get(i - 1).getHeight() < row.get(i).getHeight() && row.get(i).getHeight() > row.get(highestFromLeftIndex).getHeight()) {
+//                        System.out.println(row.get(i - 1).getHeight() + "<" + row.get(i).getHeight());
+                        row.get(i).setVisibleFromLeft(true);
+                        if (row.get(i).getHeight() > row.get(highestFromLeftIndex).getHeight()) {
+                            highestFromLeftIndex = i;
+                        }
+                    }
+                }
+//                System.out.println("Highest from left index: " + highestFromLeftIndex);
+            }
+        }
+        return 0;
+    }
+
+    public int getVisibleFromRight(Map<Integer, List<Tree>> treeGrid) {
+        for (Map.Entry<Integer, List<Tree>> entry : treeGrid.entrySet()) {
+            Integer k = entry.getKey();
+            List<Tree> row = entry.getValue();
+//            System.out.println("\nRow: " + (k + 1) + "\n" + row);
+            if (k == 0) {
+                row.forEach(t -> t.setVisibleFromTop(true));
+            } else if (k == row.size() - 1) {
+                row.forEach(t -> t.setVisibleFromBottom(true));
+            } else {
+                // Visible from Right
+                row.get(row.size()-1).setVisibleFromRight(true);
+                int highestFromRightIndex = row.size()-1;
+                for (int i = row.size()-2; i > 0; i--) {
+                    if (row.get(i + 1).getHeight() < row.get(i).getHeight() && row.get(i).getHeight() > row.get(highestFromRightIndex).getHeight()) {
+//                        System.out.println(row.get(i + 1).getHeight() + "<" + row.get(i).getHeight());
+                        row.get(i).setVisibleFromRight(true);
+                        if (row.get(i).getHeight() > row.get(highestFromRightIndex).getHeight()) {
+                            highestFromRightIndex = i;
+                        }
+                    }
+                }
+//                System.out.println("Highest from right index: " + highestFromRightIndex);
+            }
+        }
+        return 0;
+    }
+
+    public int getVisibleFromTop(Map<Integer, List<Tree>> treeGrid) {
+
+        for (int col = 1; col < treeGrid.get(0).size(); col++) {
+            for (int row = 1; row < treeGrid.size()-1; row++) {
+                System.out.print(treeGrid.get(row).get(col).getHeight());
+                treeGrid.get(row).get(0).setVisibleFromTop(true);
+                int highestFromTopIndex = 0;
+                if (treeGrid.get(row-1).get(col).getHeight() < treeGrid.get(row).get(col).getHeight() &&
+                        treeGrid.get(row).get(col).getHeight() > treeGrid.get(highestFromTopIndex).get(col).getHeight()) {
+                    treeGrid.get(row).get(col).setVisibleFromTop(true);
+                    System.out.println("\n" + treeGrid.get(row - 1).get(col).getHeight() + "<" + treeGrid.get(row).get(col).getHeight());
+                    if (treeGrid.get(row).get(col).getHeight() > treeGrid.get(highestFromTopIndex).get(col).getHeight()) {
+                        highestFromTopIndex = row;
+                    }
+                }
+            }
+            System.out.println("");
+        }
+
+        return 0;
     }
 
 
