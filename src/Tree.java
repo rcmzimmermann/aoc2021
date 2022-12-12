@@ -5,6 +5,13 @@ public class Tree {
     private boolean visibleFromTop;
     private boolean visibleFromBottom;
 
+    private int scenicScore;
+
+    private int viewingDistanceLeft;
+    private int viewingDistanceRight;
+    private int viewingDistanceTop;
+    private int viewingDistanceBottom;
+
     public Tree(int height) {
         this.height = height;
     }
@@ -47,6 +54,30 @@ public class Tree {
 
     public void setVisibleFromBottom(boolean visibleFromBottom) {
         this.visibleFromBottom = visibleFromBottom;
+    }
+
+    public int getScenicScore() {
+        return scenicScore;
+    }
+
+    public void setScenicScore(int scenicScore) {
+        this.scenicScore = viewingDistanceLeft * viewingDistanceRight * viewingDistanceTop * viewingDistanceBottom;
+    }
+
+    public void setViewingDistanceLeft(int viewingDistanceLeft) {
+        this.viewingDistanceLeft = viewingDistanceLeft;
+    }
+
+    public void setViewingDistanceRight(int viewingDistanceRight) {
+        this.viewingDistanceRight = viewingDistanceRight;
+    }
+
+    public void setViewingDistanceTop(int viewingDistanceTop) {
+        this.viewingDistanceTop = viewingDistanceTop;
+    }
+
+    public void setViewingDistanceBottom(int viewingDistanceBottom) {
+        this.viewingDistanceBottom = viewingDistanceBottom;
     }
 
     @Override
