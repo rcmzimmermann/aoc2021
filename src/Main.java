@@ -22,7 +22,7 @@ public class Main {
         String stringResult = "";
         int intResult = 0;
         try {
-            main.resultDayEight(main.getStringInputFromList("C:\\Users\\robizimm\\Documents\\AOC\\aoc2021\\day-eight.txt"));
+            main.resultDayNine(main.getStringInputFromList("C:\\Users\\robizimm\\Documents\\AOC\\aoc2021\\day-ten.txt"));
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
@@ -58,6 +58,59 @@ public class Main {
         }
         scanner.close();
         return inputList;
+    }
+
+    public void resultDayNine(List<String> inputList) {
+        List<Command> commands = new ArrayList<>();
+        inputList.forEach(i -> {
+            if (i.contains(" ")) {
+                String[] array = i.split(" ");
+                Command command = new Command(array[0], Integer.parseInt(array[1]));
+                commands.add(command);
+            } else {
+                Command command = new Command(i, 0);
+                commands.add(command);
+            }
+        });
+
+        long cycle20 = 10L * 20;
+        long cycle60 = 17L * 60;
+        long cycle100 = 21L * 100;
+        long cycle140 = 39L * 140;
+        long cycle180 = 21L * 180;
+        long cycle220 = 21L * 220;
+
+        int cycle = 0;
+        int value = 1;
+
+
+        for (int i = 0; i < commands.size(); i++) {
+            String command = commands.get(i).getCommand();
+            int comValue = commands.get(i).getValue();
+
+            if (command.equals("noop")) {
+                cycle += 1;
+                System.out.println("do noop\n" + cycle + " : " + value);
+
+            }
+
+            if (command.equals("addx")) {
+
+                cycle += 1;
+                System.out.println("do addx\n" + cycle + " : " + value);
+                cycle += 1;
+                System.out.println("do addx\n" + cycle + " : " + value);
+                value += comValue;
+                System.out.println(cycle + " : " + value);
+            }
+        }
+        long result = cycle20 + cycle60 + cycle100 + cycle140 + cycle180 + cycle220;
+        System.out.println("Result of 6 cycles: " + result);
+
+    }
+
+    private boolean checkCycle(int cycle, int cycleNum) {
+        return cycle == cycleNum;
     }
 
 
