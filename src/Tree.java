@@ -60,7 +60,7 @@ public class Tree {
         return scenicScore;
     }
 
-    public void setScenicScore(int scenicScore) {
+    public void setScenicScore() {
         this.scenicScore = viewingDistanceLeft * viewingDistanceRight * viewingDistanceTop * viewingDistanceBottom;
     }
 
@@ -78,6 +78,22 @@ public class Tree {
 
     public void setViewingDistanceBottom(int viewingDistanceBottom) {
         this.viewingDistanceBottom = viewingDistanceBottom;
+    }
+
+    public int getViewingDistanceLeft() {
+        return viewingDistanceLeft;
+    }
+
+    public int getViewingDistanceRight() {
+        return viewingDistanceRight;
+    }
+
+    public int getViewingDistanceTop() {
+        return viewingDistanceTop;
+    }
+
+    public int getViewingDistanceBottom() {
+        return viewingDistanceBottom;
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.sql.Struct;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -22,7 +23,7 @@ public class Main {
         String stringResult = "";
         int intResult = 0;
         try {
-            main.resultDayNine(main.getStringInputFromList("C:\\Users\\robizimm\\Documents\\AOC\\aoc2021\\day-ten.txt"));
+            main.resultDayTen(main.getStringInputFromList("C:\\Users\\robizimm\\Documents\\AOC\\aoc2021\\day-ten.txt"));
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
@@ -60,7 +61,7 @@ public class Main {
         return inputList;
     }
 
-    public void resultDayNine(List<String> inputList) {
+    public void resultDayTen(List<String> inputList) {
         List<Command> commands = new ArrayList<>();
         inputList.forEach(i -> {
             if (i.contains(" ")) {
@@ -83,13 +84,14 @@ public class Main {
         int cycle = 0;
         int value = 1;
 
-
+        List<Integer> cycles = new ArrayList<>();
         for (int i = 0; i < commands.size(); i++) {
             String command = commands.get(i).getCommand();
             int comValue = commands.get(i).getValue();
 
             if (command.equals("noop")) {
                 cycle += 1;
+                cycles.add(value);
                 System.out.println("do noop\n" + cycle + " : " + value);
 
             }
@@ -97,20 +99,106 @@ public class Main {
             if (command.equals("addx")) {
 
                 cycle += 1;
-                System.out.println("do addx\n" + cycle + " : " + value);
+                cycles.add(value);
+                System.out.println("do addx " + comValue + "\n" + cycle + " : " + value);
                 cycle += 1;
-                System.out.println("do addx\n" + cycle + " : " + value);
+                System.out.println("do addx " + comValue + "\n" + cycle + " : " + value);
                 value += comValue;
+                cycles.add(value);
                 System.out.println(cycle + " : " + value);
             }
         }
         long result = cycle20 + cycle60 + cycle100 + cycle140 + cycle180 + cycle220;
         System.out.println("Result of 6 cycles: " + result);
+//        cycles.add(0, 1);
+        System.out.println(cycles);
+        System.out.println(cycles.size());
+        
+        List<Integer> sublist1 = cycles.subList(0, 40);
+        List<Integer> sublist2 = cycles.subList(40, 80);
+        List<Integer> sublist3 = cycles.subList(80, 120);
+        List<Integer> sublist4 = cycles.subList(120, 160);
+        List<Integer> sublist5 = cycles.subList(160, 200);
+        List<Integer> sublist6 = cycles.subList(200, 240);
+        
+        String CRTLine1 = "";
 
-    }
+        for (int i = 0; i < sublist1.size(); i++) {
+            int val = sublist1.get(i);
+            if (val-1 == i || val == i || val == i+1) {
+                CRTLine1 += "#";
+            } else {
+                CRTLine1 += ".";
+            }
+        }
+//        System.out.println(sublist1);
+        System.out.println(CRTLine1);
 
-    private boolean checkCycle(int cycle, int cycleNum) {
-        return cycle == cycleNum;
+        String CRTLine2 = "";
+
+        for (int i = 0; i < sublist2.size(); i++) {
+            int val = sublist2.get(i);
+            if (val-1 == i || val == i || val == i+1) {
+                CRTLine2 += "#";
+            } else {
+                CRTLine2 += ".";
+            }
+        }
+//        System.out.println(sublist2);
+        System.out.println(CRTLine2);
+
+        String CRTLine3 = "";
+
+        for (int i = 0; i < sublist3.size(); i++) {
+            int val = sublist3.get(i);
+            if (val-1 == i || val == i || val == i+1) {
+                CRTLine3 += "#";
+            } else {
+                CRTLine3 += ".";
+            }
+        }
+//        System.out.println(sublist3);
+        System.out.println(CRTLine3);
+
+        String CRTLine4 = "";
+
+        for (int i = 0; i < sublist4.size(); i++) {
+            int val = sublist4.get(i);
+            if (val-1 == i || val == i || val == i+1) {
+                CRTLine4 += "#";
+            } else {
+                CRTLine4 += ".";
+            }
+        }
+//        System.out.println(sublist4);
+        System.out.println(CRTLine4);
+
+        String CRTLine5 = "";
+
+        for (int i = 0; i < sublist5.size(); i++) {
+            int val = sublist5.get(i);
+            if (val-1 == i || val == i || val == i+1) {
+                CRTLine5 += "#";
+            } else {
+                CRTLine5 += ".";
+            }
+        }
+//        System.out.println(sublist5);
+        System.out.println(CRTLine5);
+
+        String CRTLine6 = "";
+
+        for (int i = 0; i < sublist6.size(); i++) {
+            int val = sublist6.get(i);
+            if (val-1 == i || val == i || val == i+1) {
+                CRTLine6 += "#";
+            } else {
+                CRTLine6 += ".";
+            }
+        }
+//        System.out.println(sublist6);
+        System.out.println(CRTLine6);
+
     }
 
 
@@ -123,156 +211,116 @@ public class Main {
             treeGrid.put(i, treeRow);
         }
 
-        treeGrid.forEach((k, row) -> {
-            if (k == 0) {
-                row.forEach(t -> t.setVisibleFromTop(true));
-            } else if (k == treeGrid.size() - 1) {
-                row.forEach(t -> t.setVisibleFromBottom(true));
-            }
+        for (int i = 0; i < treeGrid.size(); i++) {
+            List<Tree> row = treeGrid.get(i);
+            System.out.println("\n" + row + "\n");
+            for (int j = 0; j < row.size(); j++) {
+                List<Integer> left = row.stream().map(Tree::getHeight).collect(Collectors.toList()).subList(0, j);
+                List<Integer> right = row.stream().map(Tree::getHeight).collect(Collectors.toList()).subList(j+1, row.size());
+                System.out.println("Left: " + left + "Current: " + row.get(j) + " Right: " + right);
+                List<Integer> top = getTopDownListPerIndex(treeGrid, j).stream().map(Tree::getHeight).collect(Collectors.toList()).subList(0, i);
+                List<Integer> bottom = getTopDownListPerIndex(treeGrid, j).stream().map(Tree::getHeight).collect(Collectors.toList()).subList(i+1, treeGrid.size());
+                System.out.println("Top: " + top + " Current: " + row.get(j) + " Bottom: " + bottom);
 
-            row.get(0).setVisibleFromLeft(true);
-            row.get(row.size() - 1).setVisibleFromRight(true);
+                Collections.reverse(left);
+                Collections.reverse(top);
+
+                int height = row.get(j).getHeight();
+                LEFT: for (int k = height; k < 10; k++) {
+                    int leftindex = left.indexOf(k);
+                    if (leftindex != -1) {
+                        for (int l = 0; l < left.size(); l++) {
+                            if (left.get(l) >= k) {
+                                System.out.println("LeftIndex: " + l);
+                                row.get(j).setViewingDistanceLeft(l + 1);
+                                break LEFT;
+                            }
+                        }
+                    }
+                    if (k == 9 && leftindex == -1) {
+                        System.out.println("Everything smaller on the left");
+                        row.get(j).setViewingDistanceLeft(left.size());
+                    }
+                }
+
+                RIGHT: for (int k = height; k < 10; k++) {
+                    int rightindex = right.indexOf(k);
+                    if (rightindex != -1) {
+                        for (int l = 0; l < right.size(); l++) {
+                            if (right.get(l) >= k) {
+                                System.out.println("RightIndex: " + l);
+                                row.get(j).setViewingDistanceRight(l + 1);
+                                break RIGHT;
+                            }
+                        }
+                    }
+                    if (k == 9 && rightindex == -1) {
+                        System.out.println("Everything smaller on the right");
+                        row.get(j).setViewingDistanceRight(right.size());
+                    }
+                }
+
+//                System.out.println("Top: " + top);
+                TOP: for (int k = height; k < 10; k++) {
+                    int topindex = top.indexOf(k);
+                    if (topindex != -1) {
+                        for (int l = 0; l < top.size(); l++) {
+                            if (top.get(l) >= k) {
+                                System.out.println("TopIndex: " + l);
+                                row.get(j).setViewingDistanceTop(l+1);
+                                break TOP;
+                            }
+                        }
+
+                    }
+                    if (k == 9 && topindex == -1) {
+                        System.out.println("Everything smaller on the top");
+                        row.get(j).setViewingDistanceTop(top.size());
+                    }
+                }
+                BOTTOM:for (int k = height; k < 10; k++) {
+                    int bottomindex = bottom.indexOf(k);
+                    if (bottomindex != -1) {
+                        for (int l = 0; l < bottom.size(); l++) {
+                            if (bottom.get(l) >= k) {
+                                System.out.println("BottomIndex: " + l);
+                                row.get(j).setViewingDistanceBottom(l + 1);
+                                break BOTTOM;
+                            }
+                        }
+                    }
+                    if (k == 9 && bottomindex == -1) {
+                        System.out.println("Everything smaller on the bottom");
+                        row.get(j).setViewingDistanceBottom(bottom.size());
+                    }
+                }
+            }
+        }
+        treeGrid.forEach((k,row) -> {
+            row.forEach(t -> {
+                t.setScenicScore();
+//                System.out.println(t.getScenicScore());
+            });
+        });
+        List<Integer> scenicScores = new ArrayList<>();
+        treeGrid.forEach((k, row) -> {
+            List<Integer> scores = row.stream().map(Tree::getScenicScore).collect(Collectors.toList());
+//            System.out.println(scores);
+            scenicScores.addAll(scores);
         });
 
-        int highestFromLeftIndex = getVisibleFromLeft(treeGrid);
-        int highestFromRightIndex = getVisibleFromRight(treeGrid);
-        int highestFromTopIndex = getVisibleFromTop(treeGrid);
-        int heighestFromBottomIndex = getVisibleFromBottom(treeGrid);
+        Collections.sort(scenicScores);
+        System.out.println(scenicScores);
 
-        int numTreesVisible = 0;
-        for (Map.Entry<Integer, List<Tree>> entry : treeGrid.entrySet()) {
-            Integer k = entry.getKey();
-            List<Tree> row = entry.getValue();
-            for (Tree t : row) {
-                if (t.isVisibleFromBottom() || t.isVisibleFromLeft() || t.isVisibleFromRight() || t.isVisibleFromTop())
-                    numTreesVisible += 1;
-            }
-        }
-
-//        treeGrid.forEach((k,row) -> {
-//            row.forEach(t -> System.out.print(t.isVisibleFromLeft() + " "));
-//            System.out.println("");
-//        });
-
+        Tree tree = treeGrid.get(3).get(5);
+//        System.out.println(tree);
 
     }
 
-    public int getVisibleFromLeft(Map<Integer, List<Tree>> treeGrid) {
-        for (Map.Entry<Integer, List<Tree>> entry : treeGrid.entrySet()) {
-            Integer k = entry.getKey();
-            List<Tree> row = entry.getValue();
-            System.out.println("\nRow: " + (k) + "\n" + row);
-            if (k == 0) {
-                row.forEach(t -> {
-                    t.setVisibleFromTop(true);
-                    t.setViewingDistanceTop(0);
-                });
-                if (k == treeGrid.size() - 1) {
-                    row.forEach(t -> {
-                        t.setVisibleFromBottom(true);
-                        t.setViewingDistanceBottom(0);
-                    });
-                }
-                // Visible from left
-                row.get(0).setVisibleFromLeft(true);
-                row.get(0).setViewingDistanceLeft(0);
-                row.get(row.size() - 1).setViewingDistanceRight(0);
-                int highestFromLeftIndex = 0;
-                int previousHeight = 0;
-                int currentHeight = 0;
-                for (int i = 0; i < row.size(); i++) {
-                    currentHeight = row.get(i).getHeight();
-                    int numTreesVisibleFromLeft = 0;
-                    System.out.println("Previous height: " + previousHeight);
-                    System.out.println("Current height: " + currentHeight);
-                    if (previousHeight < row.get(i).getHeight()) {
-                        previousHeight = row.get(i).getHeight();
-                        System.out.println("Trees visible on left side: " + numTreesVisibleFromLeft);
-                        row.get(i).setVisibleFromLeft(true);
-                        if (row.get(i).getHeight() > row.get(highestFromLeftIndex).getHeight()) {
-                            highestFromLeftIndex = i;
-                        }
-                    } else {
-                        previousHeight = row.get(i).getHeight();
-                    }
-                }
-//                System.out.println("Highest from left index: " + highestFromLeftIndex);
-            }
-        }
-        return 0;
-    }
-
-    public int getVisibleFromRight(Map<Integer, List<Tree>> treeGrid) {
-        for (Map.Entry<Integer, List<Tree>> entry : treeGrid.entrySet()) {
-            Integer k = entry.getKey();
-            List<Tree> row = entry.getValue();
-//            System.out.println("\nRow: " + (k + 1) + "\n" + row);
-            if (k == 0) {
-                row.forEach(t -> t.setVisibleFromTop(true));
-            } else if (k == row.size() - 1) {
-                row.forEach(t -> t.setVisibleFromBottom(true));
-            } else {
-                // Visible from Right
-                row.get(row.size() - 1).setVisibleFromRight(true);
-                int highestFromRightIndex = row.size() - 1;
-                for (int i = row.size() - 2; i > 0; i--) {
-                    if (row.get(i + 1).getHeight() < row.get(i).getHeight() && row.get(i).getHeight() > row.get(highestFromRightIndex).getHeight()) {
-//                        System.out.println(row.get(i + 1).getHeight() + "<" + row.get(i).getHeight());
-                        row.get(i).setVisibleFromRight(true);
-                        if (row.get(i).getHeight() > row.get(highestFromRightIndex).getHeight()) {
-                            highestFromRightIndex = i;
-                        }
-                    }
-                }
-//                System.out.println("Highest from right index: " + highestFromRightIndex);
-            }
-        }
-        return 0;
-    }
-
-    public int getVisibleFromTop(Map<Integer, List<Tree>> treeGrid) {
-
-        for (int col = 1; col < treeGrid.get(0).size(); col++) {
-            int highestFromTopIndex = 0;
-//            System.out.println("\nCol: " + col);
-            for (int row = 1; row < treeGrid.size() - 1; row++) {
-                treeGrid.get(0).forEach(t -> t.setVisibleFromTop(true));
-
-                if (treeGrid.get(row - 1).get(col).getHeight() < treeGrid.get(row).get(col).getHeight() &&
-                        treeGrid.get(row).get(col).getHeight() > treeGrid.get(highestFromTopIndex).get(col).getHeight()) {
-                    treeGrid.get(row).get(col).setVisibleFromTop(true);
-//                    System.out.println(treeGrid.get(row - 1).get(col).getHeight() + "<" + treeGrid.get(row).get(col).getHeight());
-                    if (treeGrid.get(row).get(col).getHeight() > treeGrid.get(highestFromTopIndex).get(col).getHeight()) {
-                        highestFromTopIndex = row;
-                    }
-                }
-            }
-//            System.out.println("Highest index from top: " + highestFromTopIndex);
-        }
-
-        return 0;
-    }
-
-    public int getVisibleFromBottom(Map<Integer, List<Tree>> treeGrid) {
-        for (int col = 1; col < treeGrid.get(0).size(); col++) {
-            int highestFromBottomIndex = treeGrid.size() - 1;
-//            System.out.println("\nCol: " + col);
-            for (int row = treeGrid.size() - 2; row > 0; row--) {
-                treeGrid.get(treeGrid.size() - 1).forEach(t -> t.setVisibleFromBottom(true));
-
-                if (treeGrid.get(row + 1).get(col).getHeight() < treeGrid.get(row).get(col).getHeight() &&
-                        treeGrid.get(row).get(col).getHeight() > treeGrid.get(highestFromBottomIndex).get(col).getHeight()) {
-                    treeGrid.get(row).get(col).setVisibleFromBottom(true);
-//                    System.out.println(treeGrid.get(row + 1).get(col).getHeight() + "<" + treeGrid.get(row).get(col).getHeight());
-                    if (treeGrid.get(row).get(col).getHeight() > treeGrid.get(highestFromBottomIndex).get(col).getHeight()) {
-                        highestFromBottomIndex = row;
-                    }
-                }
-            }
-//            System.out.println("Highest index from bottom: " + highestFromBottomIndex);
-        }
-
-        return 0;
+    private List<Tree> getTopDownListPerIndex(Map<Integer, List<Tree>> treeGrid, int index) {
+        List<Tree> topDown = new ArrayList<>();
+        treeGrid.forEach((k,row) -> topDown.add(row.get(index)));
+        return topDown;
     }
 
 
