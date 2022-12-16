@@ -105,14 +105,14 @@ public class Main {
                 System.out.println("do addx " + comValue + "\n" + cycle + " : " + value);
                 value += comValue;
                 cycles.add(value);
-                System.out.println(cycle + " : " + value);
+//                System.out.println(cycle + " : " + value);
             }
         }
         long result = cycle20 + cycle60 + cycle100 + cycle140 + cycle180 + cycle220;
         System.out.println("Result of 6 cycles: " + result);
-//        cycles.add(0, 1);
+        cycles.add(0, 1);
         System.out.println(cycles);
-        System.out.println(cycles.size());
+//        System.out.println(cycles.size());
         
         List<Integer> sublist1 = cycles.subList(0, 40);
         List<Integer> sublist2 = cycles.subList(40, 80);
@@ -125,7 +125,9 @@ public class Main {
 
         for (int i = 0; i < sublist1.size(); i++) {
             int val = sublist1.get(i);
-            if (val-1 == i || val == i || val == i+1) {
+//            System.out.println("Sprite pos: " + (val-1) + val + (val+1));
+//            System.out.println("CRT pixel: " + i);
+            if (val-1 == i || val == i || val+1 == i) {
                 CRTLine1 += "#";
             } else {
                 CRTLine1 += ".";
@@ -138,7 +140,7 @@ public class Main {
 
         for (int i = 0; i < sublist2.size(); i++) {
             int val = sublist2.get(i);
-            if (val-1 == i || val == i || val == i+1) {
+            if (val-1 == i || val == i || val+1 == i) {
                 CRTLine2 += "#";
             } else {
                 CRTLine2 += ".";
@@ -151,7 +153,7 @@ public class Main {
 
         for (int i = 0; i < sublist3.size(); i++) {
             int val = sublist3.get(i);
-            if (val-1 == i || val == i || val == i+1) {
+            if (val-1 == i || val == i || val+1 == i) {
                 CRTLine3 += "#";
             } else {
                 CRTLine3 += ".";
@@ -164,7 +166,7 @@ public class Main {
 
         for (int i = 0; i < sublist4.size(); i++) {
             int val = sublist4.get(i);
-            if (val-1 == i || val == i || val == i+1) {
+            if (val-1 == i || val == i || val+1 == i) {
                 CRTLine4 += "#";
             } else {
                 CRTLine4 += ".";
@@ -177,7 +179,7 @@ public class Main {
 
         for (int i = 0; i < sublist5.size(); i++) {
             int val = sublist5.get(i);
-            if (val-1 == i || val == i || val == i+1) {
+            if (val-1 == i || val == i || val+1 == i) {
                 CRTLine5 += "#";
             } else {
                 CRTLine5 += ".";
@@ -190,7 +192,7 @@ public class Main {
 
         for (int i = 0; i < sublist6.size(); i++) {
             int val = sublist6.get(i);
-            if (val-1 == i || val == i || val == i+1) {
+            if (val-1 == i || val == i || val+1 == i) {
                 CRTLine6 += "#";
             } else {
                 CRTLine6 += ".";
