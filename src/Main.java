@@ -1,7 +1,9 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.math.BigInteger;
 import java.sql.Struct;
 import java.util.*;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -23,7 +25,7 @@ public class Main {
         String stringResult = "";
         int intResult = 0;
         try {
-            main.resultDayTen(main.getStringInputFromList("C:\\Users\\robizimm\\Documents\\AOC\\aoc2021\\day-ten.txt"));
+            main.resultDayEleven(main.getStringInputFromList("C:\\Users\\robizimm\\Documents\\AOC\\aoc2021\\day-eleven.txt"));
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
@@ -60,6 +62,74 @@ public class Main {
         scanner.close();
         return inputList;
     }
+
+    public void resultDayEleven(List<String> inputList) {
+        List<Monkey> monkeys = getMonkeys(inputList);
+        int round = 0;
+        while (++round <= 10000) {
+            System.out.println("Round: " + round);
+            for (Monkey m : monkeys) {
+                while (!m.getItems().isEmpty()) {
+                    BigInteger currentWorryLevel = m.inspect(m.getItems().get(0));
+                    int nextMonkey = m.test(currentWorryLevel);
+                    monkeys.get(nextMonkey).getItems().add(currentWorryLevel);
+                    m.getItems().remove(0);
+                }
+            }
+
+            if (round == 1 || round == 20 || round == 1000 || round == 5000 || round == 10000) {
+                System.out.println("\nRound " + round);
+                monkeys.forEach(System.out::println);
+            }
+        }
+
+//        Collections.sort(monkeys, Comparator.comparing(Monkey::getNumInspections));
+//        Collections.reverse(monkeys);
+//        long monkeyBusiness = monkeys.get(0).getNumInspections() * monkeys.get(1).getNumInspections();
+//        System.out.println(monkeyBusiness);
+
+    }
+
+
+
+    public List<Monkey> getMonkeys(List<String> inputList) {
+        List<Monkey> monkeys = new ArrayList<>();
+        int currentMonkey = 0;
+        for (String i : inputList) {
+            if (i.startsWith("Monkey")) {
+                currentMonkey = Integer.parseInt(i.split(" ")[1].split("")[0]);
+                Monkey monkey = new Monkey(currentMonkey);
+
+                monkeys.add(monkey);
+            }
+            if (i.contains("Starting items: ")) {
+                String[] array = i.split(": ");
+                for (String item : array[1].split(", ")) {
+                    monkeys.get(currentMonkey).getItems().add(new BigInteger(item));
+                }
+            }
+            if (i.contains("Operation: ")) {
+                String[] array = i.split("= old ")[1].split(" ");
+                monkeys.get(currentMonkey).setOperation(array[0]);
+                monkeys.get(currentMonkey).setOperationValue(array[1]);
+            }
+            if (i.contains("Test: "))
+                monkeys.get(currentMonkey).setTestDivideBy(new BigInteger(i.split(" by ")[1]));
+            if (i.contains("If true: "))
+                monkeys.get(currentMonkey).setToMonkeyTrue(Integer.parseInt(i.split("monkey ")[1]));
+            if (i.contains("If false: "))
+                monkeys.get(currentMonkey).setToMonkeyFalse(Integer.parseInt(i.split("monkey ")[1]));
+        }
+        return monkeys;
+    }
+
+
+
+
+
+
+
+
 
     public void resultDayTen(List<String> inputList) {
         List<Command> commands = new ArrayList<>();
@@ -202,7 +272,6 @@ public class Main {
         System.out.println(CRTLine6);
 
     }
-
 
     public void resultDayEight(List<String> inputList) {
         Map<Integer, List<Tree>> treeGrid = new HashMap<>();
