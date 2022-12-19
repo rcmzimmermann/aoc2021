@@ -1,10 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigInteger;
-import java.sql.Struct;
 import java.util.*;
-import java.util.concurrent.Future;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -17,6 +14,8 @@ public class Main {
     final String DRAW = "Draw";
     final String WIN = "WIN";
 
+    BigInteger primes = BigInteger.valueOf(1);
+
     Map<Integer, Stack> stacks = new HashMap<>();
 
     public static void main(String[] args) {
@@ -25,7 +24,7 @@ public class Main {
         String stringResult = "";
         int intResult = 0;
         try {
-            main.resultDayEleven(main.getStringInputFromList("C:\\Users\\robizimm\\Documents\\AOC\\aoc2021\\day-eleven.txt"));
+            main.resultDayNine(main.getStringInputFromList("C:\\Users\\robizimm\\Documents\\AOC\\aoc2021\\day-nine.txt"));
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
@@ -63,34 +62,106 @@ public class Main {
         return inputList;
     }
 
+    public void resultDayNine(List<String> inputList) {
+        List<Move> moves = new ArrayList<>();
+        inputList.forEach(i -> {
+            String[] array = i.split(" ");
+            moves.add(new Move(Direction.valueOf(array[0]), Integer.parseInt(array[1])));
+        });
+
+        int maxX = 1;
+        int maxY = 1;
+        Map<Integer, List<String>> grid = getGrid(moves);
+        maxY = grid.size();
+        maxX = grid.get(0).size();
+
+        System.out.println("Max Y: " + maxY);
+        System.out.println("Max X: " + maxX);
+
+
+
+        System.out.println(moves);
+    }
+
+    private Map<Integer, List<String>> getGrid(List<Move> moves) {
+        Map<Integer, List<String>> grid = new HashMap<>();
+        int maxX = 1;
+        int maxY = 1;
+        int x = 1;
+        int y = 1;
+        for (Move m : moves) {
+            switch (m.getDirection()) {
+                case R:
+                    x += m.getAmount();
+                    if (x > maxX) maxX = x;
+                    break;
+                case L:
+                    x -= m.getAmount();
+                    if (x > maxX) maxX = x;
+                    break;
+                case U:
+                    y += m.getAmount();
+                    if (y > maxY) maxY = y;
+                    break;
+                case D:
+                    y -= m.getAmount();
+                    if (y > maxY) maxY = y;
+                    break;
+            }
+        }
+//        System.out.println("Max X: " + maxX);
+//        System.out.println("Max Y: " + maxY);
+        for (int i = 0; i < maxY; i++) {
+            for (int j = 0; j < maxX; j++) {
+                grid.computeIfAbsent(i, k -> new ArrayList<>()).add(".");
+            }
+        }
+        return grid;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public void resultDayEleven(List<String> inputList) {
         List<Monkey> monkeys = getMonkeys(inputList);
         int round = 0;
         while (++round <= 10000) {
-            System.out.println("Round: " + round);
+//            System.out.println("Round: " + round);
             for (Monkey m : monkeys) {
                 while (!m.getItems().isEmpty()) {
                     BigInteger currentWorryLevel = m.inspect(m.getItems().get(0));
+                    currentWorryLevel = currentWorryLevel.mod(primes);
                     int nextMonkey = m.test(currentWorryLevel);
                     monkeys.get(nextMonkey).getItems().add(currentWorryLevel);
                     m.getItems().remove(0);
                 }
             }
 
-            if (round == 1 || round == 20 || round == 1000 || round == 5000 || round == 10000) {
+            if (round == 1 || round == 20 || round == 10000) {
                 System.out.println("\nRound " + round);
                 monkeys.forEach(System.out::println);
             }
         }
 
-//        Collections.sort(monkeys, Comparator.comparing(Monkey::getNumInspections));
-//        Collections.reverse(monkeys);
-//        long monkeyBusiness = monkeys.get(0).getNumInspections() * monkeys.get(1).getNumInspections();
-//        System.out.println(monkeyBusiness);
+        Collections.sort(monkeys, Comparator.comparing(Monkey::getNumInspections));
+        Collections.reverse(monkeys);
+        long monkeyBusiness = monkeys.get(0).getNumInspections() * monkeys.get(1).getNumInspections();
+        System.out.println(monkeyBusiness);
 
     }
-
-
 
     public List<Monkey> getMonkeys(List<String> inputList) {
         List<Monkey> monkeys = new ArrayList<>();
@@ -113,8 +184,11 @@ public class Main {
                 monkeys.get(currentMonkey).setOperation(array[0]);
                 monkeys.get(currentMonkey).setOperationValue(array[1]);
             }
-            if (i.contains("Test: "))
-                monkeys.get(currentMonkey).setTestDivideBy(new BigInteger(i.split(" by ")[1]));
+            if (i.contains("Test: ")) {
+                String[] array = i.split(" by ");
+                primes = primes.multiply(new BigInteger(array[1]));
+                monkeys.get(currentMonkey).setTestDivideBy(new BigInteger(array[1]));
+            }
             if (i.contains("If true: "))
                 monkeys.get(currentMonkey).setToMonkeyTrue(Integer.parseInt(i.split("monkey ")[1]));
             if (i.contains("If false: "))
@@ -122,14 +196,6 @@ public class Main {
         }
         return monkeys;
     }
-
-
-
-
-
-
-
-
 
     public void resultDayTen(List<String> inputList) {
         List<Command> commands = new ArrayList<>();
